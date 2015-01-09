@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -36,7 +37,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 	@Override
 	protected void onMessage(Context context, Intent data) {
 		String message;
-		// Message from PHP server
+		// Message server
 		message = data.getStringExtra("message");
 		// Open a new activity called GCMMessageView
 		Intent intent = new Intent(this, GCMMessageView.class);
@@ -45,16 +46,20 @@ public class GCMIntentService extends GCMBaseIntentService {
 		// Starts the activity on notification click
 		PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
+
 		// Create the notification with a notification builder
 		Notification notification = new Notification.Builder(this)
 				.setSmallIcon(R.drawable.ic_launcher)
 				.setWhen(System.currentTimeMillis())
-				.setContentTitle("Android GCM Tutorial")
+				.setContentTitle("Android GCM Example")
 				.setContentText(message)
 				.setContentIntent(pIntent)
-				.getNotification();
+				.setLights(Color.BLUE, 500, 500)
+				.setDefaults(Notification.DEFAULT_VIBRATE)
+				.build();
 		// Remove the notification on click
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		notification.defaults |= Notification.DEFAULT_SOUND;
 
 		NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		manager.notify(R.string.app_name, notification);
